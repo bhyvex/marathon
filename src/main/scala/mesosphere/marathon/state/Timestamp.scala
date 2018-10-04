@@ -27,7 +27,7 @@ abstract case class Timestamp private (private val instant: Instant) extends Ord
   def youngerThan(that: Timestamp): Boolean = this.after(that)
   def olderThan(that: Timestamp): Boolean = this.before(that)
 
-  override def toString: String = Timestamp.formatter.format(instant)
+  override def toString: String = Timestamp.WriteFormatter.format(instant)
 
   def toInstant: Instant = instant
 
@@ -70,7 +70,7 @@ object Timestamp {
     *
     * See the Joda time documentation for a description of acceptable formats:
     */
-  def apply(time: String): Timestamp = Timestamp(OffsetDateTime.parse(time))
+  def apply(time: String): Timestamp = Timestamp(OffsetDateTime.parse(time, ReadFormatter))
 
   /**
     * Returns a new Timestamp representing the current instant.
@@ -101,5 +101,6 @@ object Timestamp {
   /*
    * .toString in java.time is truncating zeros in millis part, so we use custom formatter to keep them
    */
-  val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").withZone(ZoneOffset.UTC)
+  val WriteFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").withZone(ZoneOffset.UTC)
+  val ReadFormatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME
 }
